@@ -1,0 +1,1 @@
+# Script Install Avail Node
