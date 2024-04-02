@@ -22,6 +22,9 @@ echo ""
 echo "------------------ Start Install Package & Dependency ------------------"
 yes | sudo apt-get update & sudo apt-get upgrade -y && yes | sudo apt install nano make build-essential git clang curl ufw libssl-dev protobuf-compiler --assume-yes
 echo ""
+echo "--------------------- Install & Config Rust --------------------------"
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && source ~/.cargo/env && rustup default stable && rustup update && rustup update nightly && rustup target add wasm32-unknown-unknown --toolchain nightly
+echo ""
 
 echo "---------------------------- Open Port --------------------------------"
 sudo ufw allow 22 && sudo ufw allow 80 && sudo ufw allow 443 && sudo ufw allow 30333 && sudo ufw allow 9933 && sudo ufw allow 9615 && sudo ufw allow 9944 && sudo ufw allow 7000 && sudo ufw allow 37000 && yes | sudo ufw enable && sudo ufw status
