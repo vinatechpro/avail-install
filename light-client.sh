@@ -20,7 +20,7 @@ echo ""
 echo "------------------------------------------------------------------------"
 echo ""
 echo "------------------ Start Install Package & Dependency ------------------"
-yes | sudo apt-get update && yes | sudo apt install nano make build-essential git clang curl ufw libssl-dev protobuf-compiler --assume-yes
+sudo apt install nano make build-essential git clang curl ufw libssl-dev protobuf-compiler --assume-yes
 echo ""
 echo "--------------------- Install & Config Rust --------------------------"
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && source ~/.cargo/env && rustup default stable && rustup update && rustup update nightly && rustup target add wasm32-unknown-unknown --toolchain nightly
