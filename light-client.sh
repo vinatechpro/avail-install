@@ -31,7 +31,7 @@ sudo ufw allow 22 && sudo ufw allow 80 && sudo ufw allow 443 && sudo ufw allow 3
 echo ""
 
 echo "----------------- Download & Install Light Client ---------------------"
-cd ~ && git clone https://github.com/availproject/avail-light.git && cd avail-light && git checkout v1.7.9-rc1 && cargo build --release
+cd ~ && git clone https://github.com/availproject/avail-light.git && cd avail-light && git checkout v1.7.10 && cargo build --release
 echo ""
 
 echo "------------------ Create File Avail Light Systemd ------------------------"
