@@ -34,6 +34,9 @@ echo "------------------ Restart Avail Service ------------------------"
 systemctl daemon-reload
 systemctl enable avail-light.service && systemctl start avail-light.service
 
-sleep 5
+sleep 3
 
 systemctl status avail-light.service
+
+# Exit the script
+exit
