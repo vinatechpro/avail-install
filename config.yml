@@ -1,39 +1,88 @@
-#!/bin/bash
-echo "Kill Avail Light Client Service..."
+log_level = 'info'
+# Light client HTTP server host name (default: 127.0.0.1)
+http_server_host = '127.0.0.1'
+# Light client HTTP server port (default: 7000).
+http_server_port = 7000
+# Secret key for libp2p keypair. Can be either set to `seed` or to `key`.
+# If set to seed, keypair will be generated from that seed.
+# If set to key, a valid ed25519 private key must be provided, else the client will fail
+# If `secret_key` is not set, random seed will be used.
+secret_key = { seed='aaa' }
+# P2P service port (default: 37000).
+port = 37000
+# Configures AutoNAT behaviour to reject probes as a server for clients that are observed at a non-global ip address (default: false)
+autonat_only_global_ips = false
+# AutoNat throttle period for re-using a peer as server for a dial-request. (default: 1s)
+autonat_throttle = 2
+# Interval in which the NAT status should be re-tried if it is currently unknown or max confidence was not reached yet. (default: 20s)
+autonat_retry_interval = 20
+# Interval in which the NAT should be tested again if max confidence was reached in a status. (default: 360s)
+autonat_refresh_interval = 360
+# AutoNat on init delay before starting the first probe. (default: 5s)
+autonat_boot_delay = 10
+# Vector of Light Client bootstrap nodes, used to bootstrap the DHT (mandatory field).
+bootstraps = ['/dns/bootnode.2.lightclient.goldberg.avail.tools/tcp/37000/p2p/12D3KooWRCgfvaLSnQfkwGehrhSNpY7i5RenWKL2ARst6ZqgdZZd','/dns/bootnode.1.lightclient.goldberg.avail.tools/tcp/37000/p2p/12D3KooWBkLsNGaD3SpMaRWtAmWVuiZg1afdNSPbtJ8M8r9ArGRT']
+# WebSocket endpoint of a full node for subscribing to the latest header, etc (default: ws://127.0.0.1:9944).
+full_node_ws = ['wss://rpc-goldberg.sandbox.avail.tools:443', 'wss://lc-rpc-goldberg.avail.tools:443/ws', 'wss://avail2.polkadotters.com:443/ws', 'wss://avail-goldberg-rpc.polka.p2p.world:443']
+# ID of application used to start application client. If app_id is not set, or set to 0, application client is not started (default: 0).
+app_id = 0
+# Confidence threshold, used to calculate how many cells need to be sampled to achieve desired confidence (default: 99.9).
+confidence = 99.9
+# File system path where RocksDB used by light client, stores its data. (default: avail_path)
+avail_path = 'avail_path'
+# If set to true, logs are displayed in JSON format, which is used for structured logging. Otherwise, plain text format is used (default: false).
+log_format_json = true
+# Disables proof verification in general, if set to true, otherwise proof verification is performed. (default: false).
+disable_proof_verification = false
+# Disables fetching of cells from RPC, set to true if client expects cells to be available in DHT (default: false)
+disable_rpc = false
+# Number of parallel queries for cell fetching via RPC from node (default: 8).
+query_proof_rpc_parallel_tasks = 8
+# Maximum number of cells per request for proof queries (default: 30).
+max_cells_per_rpc = 30
+# Maximum number of parallel tasks spawned for GET and PUT operations on DHT (default: 20).
+dht_parallelization_limit = 20
+# Starting block of the syncing process. Omitting it will disable syncing. (default: None).
+sync_start_block = 0
+# Enable or disable synchronizing finality. If disabled, finality is assumed to be verified until the 
+# starting block at the point the LC is started and is only checked for new blocks. (default: false)
+sync_finality_enable = false
+# Time-to-live for DHT entries in seconds (default: 24h).
+# Default value is set for light clients. Due to the heavy duty nature of the fat clients, it is recommended to be set far below this value - not greater than 1hr.
+# Record TTL, publication and replication intervals are co-dependent: TTL >> publication_interval >> replication_interval.
+record_ttl = 86400
+# Sets the (re-)publication interval of stored records, in seconds. This interval should be significantly shorter than the record TTL, ensure records do not expire prematurely. (default: 12h).
+# Default value is set for light clients. Fat client value needs to be inferred from the TTL value.
+# This interval should be significantly shorter than the record TTL, to ensure records do not expire prematurely.
+publication_interval = 43200
+# Sets the (re-)replication interval for stored records, in seconds. This interval should be significantly shorter than the publication interval, to ensure persistence between re-publications. (default: 3h).
+# Default value is set for light clients. Fat client value needs to be inferred from the TTL and publication interval values.
+# This interval should be significantly shorter than the publication interval, to ensure persistence between re-publications.
+replication_interval = 10800
+# The replication factor determines to how many closest peers a record is replicated. (default: 5).
+replication_factor = 5
+# Sets the amount of time to keep connections alive when they're idle. (default: 30s).
+# NOTE: libp2p default value is 10s, but because of Avail block time of 20s the value has been increased
+connection_idle_timeout = 30
+# Sets the timeout for a single Kademlia query. (default: 10s).
+query_timeout = 10
+# Sets the allowed level of parallelism for iterative Kademlia queries. (default: 3).
+query_parallelism = 3
+# Sets the Kademlia caching strategy to use for successful lookups. If set to 0, caching is disabled. (default: 1).
+caching_max_peers = 1
+# Require iterative queries to use disjoint paths for increased resiliency in the presence of potentially adversarial nodes. (default: false).
+disjoint_query_paths = false
+# The maximum number of records. (default: 2400000).
+max_kad_record_number = 2400000
+# The maximum size of record values, in bytes. (default: 8192).
+max_kad_record_size = 8192
+# The maximum number of provider records for which the local node is the provider. (default: 1024).
+max_kad_provided_keys = 1024
 
-pkill -9 avail-light
+kad_record_ttl = 43200
 
-echo "------------------ Remove Avail Path & Old Config ------------------------"
-rm -rf /root/avail-light/config.yml
-rm -rf /root/avail_path
+ot_collector_endpoint = 'http://otelcol.lightclient.goldberg.avail.tools:4317'
 
-echo "------------------ Create New Config ------------------------"
+genesis_hash = '6f09966420b2608d1947ccfb0f2a362450d1fc7fd902c29b67c906eaa965a7ae'
 
-echo ""
-
-echo "------------------ Remove File Avail Systemd ------------------------"
-rm -rf /etc/systemd/system/avail-light.service
-
-echo "------------------ Create New File Avail Light Systemd ------------------------"
-
-touch /etc/systemd/system/avail-light.service
-echo "[Unit]
-Description=Avail Light Client
-After=network.target
-StartLimitIntervalSec=0
-[Service]
-User=root
-WorkingDirectory=/root
-ExecStart= /root/avail-light/target/release/avail-light --config /root/avail-light/config.yml --identity /root/avail-light/target/release/identity.toml
-Restart=always
-RestartSec=120
-[Install]
-WantedBy=multi-user.target" > /etc/systemd/system/avail-light.service
-
-echo ""
-systemctl daemon-reload
-systemctl enable avail-light.service && systemctl start avail-light.service
-
-sleep 5
-
-systemctl status avail-light.service
+block_processing_delay = 100
