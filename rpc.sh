@@ -8,7 +8,7 @@ rm -rf /root/avail-light/config.yml
 rm -rf /root/avail_path
 
 echo "------------------ Create New Config ------------------------"
-curl -o https://raw.githubusercontent.com/vinatechpro/avail-install/main/rpc.sh && cp -r config.yml /root/avail-light
+curl -o https://raw.githubusercontent.com/vinatechpro/avail-install/main/config.yml && cp -r config.yml /root/avail-light
 echo ""
 
 echo "------------------ Remove File Avail Systemd ------------------------"
